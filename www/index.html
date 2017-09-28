@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8"/>
+  <meta name="format-detection" content="telephone=no"/>
+  <meta name="msapplication-tap-highlight" content="no"/>
+  <meta name="viewport"
+        content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width"/>
+
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src * 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src *"/>
+
+  <link rel="stylesheet" type="text/css" href="css/index.css"/>
+  <title>Hello World</title>
+</head>
+
+<body>
+<div class="app">
+  5
+  <div>网络状况:  <span id="s1"></span> </div>
+  <input type="button" value="拍照" id="btn1">
+  <input type="button" value="录像" id="btn2">
+  <video id="v1"></video>
+</div>
+<script type="text/javascript" src="cordova.js"></script>
+<script>
+  function rnd(n,m){return parseInt(n+Math.random()*(m-n))}
+  var oBtn1=document.querySelector('#btn1');
+  var oBtn2=document.querySelector('#btn2');
+  var oBtn3=document.querySelector('#btn3');
+  var watchID=null;
+  oBtn1.addEventListener('touchstart',function(){
+    navigator.camera.getPicture(function(imageData){
+      alert(imageData);
+      var image = new Image();
+      image.width=100;
+      image.src = imageData;
+      document.body.appendChild(image);
+    }, function(message){
+      alert(message)
+    }, {
+      quality: 51,  //质量  0 -100
+      sourceType:0,
+      allowEdit:true,
+      targetWidth:100
+    });
+  },false);
+  oBtn2.addEventListener('touchstart',function(){
+    var captureSuccess = function(mediaFiles) {
+      path = mediaFiles[0].fullPath;
+      document.querySelector('#v1').src=path;
+      document.querySelector('#v1').play();
+    };
+    // 采集操作出错后的回调函数
+    var captureError = function(error) {
+      navigator.notification.alert(error);
+    };
+    navigator.device.capture.captureVideo(captureSuccess, captureError, {limit:2});
+
+  },false);
+
+  document.addEventListener('deviceready', function(){
+    var net=navigator.network.connection.type;
+    document.querySelector('#s1').innerHTML=net;
+  }, false);
+
+
+</script>
+</body>
+
+</html>
